@@ -8,6 +8,7 @@ import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import { ThemeProvider } from "./components/theme-provider.tsx";
+import { ClerkProvider } from "@clerk/clerk-react";
 
 // Create a new router instance
 const router = createRouter({
@@ -25,6 +26,11 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Add your Clerk Publishable Key to the .env file");
+}
 
 // Render the app
 const rootElement = document.getElementById("app");
@@ -33,9 +39,10 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <StrictMode>
-        <RouterProvider router={router} />
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+          <RouterProvider router={router} />
+        </ClerkProvider>
       </StrictMode>
-      ,
     </ThemeProvider>
   );
 }

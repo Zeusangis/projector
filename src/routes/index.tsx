@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import "../App.css";
 import Navbar from "../components/navbar";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -8,7 +9,12 @@ export const Route = createFileRoute("/")({
 function App() {
   return (
     <div className="App">
-      <Navbar />
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
+      <SignedIn>
+        <Navbar />
+      </SignedIn>
     </div>
   );
 }

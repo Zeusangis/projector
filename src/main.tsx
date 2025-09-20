@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -9,6 +10,9 @@ import "./styles.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
+
+// Create a client for React Query
+const queryClient = new QueryClient();
 
 // Create a new router instance
 const router = createRouter({
@@ -39,9 +43,11 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <StrictMode>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-          <RouterProvider router={router} />
-        </ClerkProvider>
+        <QueryClientProvider client={queryClient}>
+          <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+            <RouterProvider router={router} />
+          </ClerkProvider>
+        </QueryClientProvider>
       </StrictMode>
     </ThemeProvider>
   );

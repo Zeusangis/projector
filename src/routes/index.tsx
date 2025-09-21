@@ -10,20 +10,20 @@ export const Route = createFileRoute("/")({
 });
 function App() {
   return (
-    <div className="App">
+    <div className="App bg-neutral-900">
       <SignedOut>
         <SignInButton />
       </SignedOut>
       <SignedIn>
         <div className="flex flex-col ">
           {/* Hero Section with Shared Background */}
-          <div className="relative w-full px-4">
+          <div className="relative w-full h-screen px-4">
             <Navbar />
             <Banner />
           </div>
 
           {/* Movies Section */}
-          <div className="w-full px-4">
+          <div className="w-full container mx-auto px-4">
             <ShowMovies />
           </div>
         </div>

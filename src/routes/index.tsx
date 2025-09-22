@@ -3,7 +3,7 @@ import "../App.css";
 import Navbar from "../components/components/navbar";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import ShowMovies from "@/components/components/showMovies";
-import Banner from "@/components/components/banner";
+import Banner from "@/components/components/movie-banner";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -17,8 +17,7 @@ function App() {
       <SignedIn>
         <div className="flex flex-col ">
           {/* Hero Section with Shared Background */}
-          <div className="relative w-full h-screen px-4">
-            <Navbar />
+          <div className="h-screen">
             <Banner />
           </div>
 

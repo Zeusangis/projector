@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-// const key = import.meta.env.TMDB_API;
-const key =
-  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzhmNWFhYzMxYmUyODc4NzFjNTI0NTRiNzUwODBmMSIsIm5iZiI6MTc1NTAyMjA0OC44NTQsInN1YiI6IjY4OWI4MmUwNzRlMjQwYzNiYTZkNzc0OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.y2tNkT0Lejmb-Um3Gt6L7fwOEn1d6hary_KnukGmLOM";
+const key = import.meta.env.TMDB_API;
 
 interface MoviesParams {
   page?: number;

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import "../App.css";
-import Navbar from "../components/components/navbar";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import ShowMovies from "@/components/components/showMovies";
 import Banner from "@/components/components/movie-banner";

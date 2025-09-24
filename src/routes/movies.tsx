@@ -1,13 +1,36 @@
 import Banner from "@/components/components/movie-banner";
 import { useInfiniteMovies, type Movie } from "@/lib/infiniteMovies";
 import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useRef } from "react";
 
 export const Route = createFileRoute("/movies")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { data: movies } = useInfiniteMovies();
+  const observer = useRef<IntersectionObserver | null>(null);
+  const {
+    data: movies,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteMovies();
+
+  const lastMovieRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
   console.log(movies?.pages.flatMap((page) => page.results));
   return (
     <div className="bg-neutral-900 min-h-screen">
@@ -20,15 +43,22 @@ function RouteComponent() {
         </div>
         <div className="grid grid-cols-5 gap-5 ">
           {(movies?.pages.flatMap((page) => page.results) || []).map(
-            (movie: Movie) => (
-              <div key={movie.id} className="">
-                <img
-                  className="w-full rounded-lg bg-cover"
-                  src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-                  alt={movie.original_title}
-                />
-              </div>
-            )
+            (movie: Movie, idx: number, arr: Movie[]) => {
+              const isLast = idx === arr.length - 1;
+              return (
+                <div
+                  key={movie.id}
+                  className=""
+                  ref={isLast ? lastMovieRef : undefined}
+                >
+                  <img
+                    className="w-full rounded-lg bg-cover"
+                    src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+                    alt={movie.original_title}
+                  />
+                </div>
+              );
+            }
           )}
         </div>
       </div>

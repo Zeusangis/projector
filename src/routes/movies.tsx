@@ -1,4 +1,5 @@
 import Banner from "@/components/components/movie-banner";
+import { MovieCard } from "@/components/components/movie-card";
 import { useInfiniteMovies, type Movie } from "@/lib/infiniteMovies";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
@@ -31,7 +32,6 @@ function RouteComponent() {
     [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
-  console.log(movies?.pages.flatMap((page) => page.results));
   return (
     <div className="bg-neutral-900 min-h-screen">
       <div className="h-screen">
@@ -46,17 +46,12 @@ function RouteComponent() {
             (movie: Movie, idx: number, arr: Movie[]) => {
               const isLast = idx === arr.length - 1;
               return (
-                <div
+                <MovieCard
                   key={movie.id}
-                  className=""
-                  ref={isLast ? lastMovieRef : undefined}
-                >
-                  <img
-                    className="w-full rounded-lg bg-cover"
-                    src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-                    alt={movie.original_title}
-                  />
-                </div>
+                  movie={movie}
+                  isLast={isLast}
+                  lastMovieRef={isLast ? lastMovieRef : undefined}
+                />
               );
             }
           )}

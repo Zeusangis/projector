@@ -20,7 +20,6 @@ function ReusableBanner({
 }: ReusableBannerProps) {
   return (
     <>
-      <Navbar />
       {/* Background Image Container */}
       <div
         className="absolute inset-0 w-full h-full "

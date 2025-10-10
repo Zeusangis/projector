@@ -1,5 +1,6 @@
 import Banner from "@/components/components/movie-banner";
 import { MovieCard } from "@/components/components/movie-card";
+import Navbar from "@/components/components/navbar";
 import { useInfiniteMovies, type Movie } from "@/lib/infiniteMovies";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
@@ -34,6 +35,7 @@ function RouteComponent() {
 
   return (
     <div className="bg-neutral-900 min-h-screen">
+      <Navbar />
       <div className="h-screen">
         <Banner />
       </div>

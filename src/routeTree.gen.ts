@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SingleMovieRouteImport } from './routes/singleMovie'
 import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
+const SingleMovieRoute = SingleMovieRouteImport.update({
+  id: '/singleMovie',
+  path: '/singleMovie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MoviesRoute = MoviesRouteImport.update({
   id: '/movies',
   path: '/movies',
@@ -37,11 +43,13 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/movies': typeof MoviesRoute
+  '/singleMovie': typeof SingleMovieRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/movies': typeof MoviesRoute
+  '/singleMovie': typeof SingleMovieRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesById {
@@ -49,18 +57,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/movies': typeof MoviesRoute
+  '/singleMovie': typeof SingleMovieRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/movies' | '/dashboard'
+  fullPaths: '/' | '/movies' | '/singleMovie' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/movies' | '/dashboard'
+  to: '/' | '/movies' | '/singleMovie' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/movies'
+    | '/singleMovie'
     | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
 }
@@ -68,10 +78,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   MoviesRoute: typeof MoviesRoute
+  SingleMovieRoute: typeof SingleMovieRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/singleMovie': {
+      id: '/singleMovie'
+      path: '/singleMovie'
+      fullPath: '/singleMovie'
+      preLoaderRoute: typeof SingleMovieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/movies': {
       id: '/movies'
       path: '/movies'
@@ -119,6 +137,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   MoviesRoute: MoviesRoute,
+  SingleMovieRoute: SingleMovieRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

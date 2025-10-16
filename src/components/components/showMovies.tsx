@@ -1,4 +1,5 @@
 import { useGetMovies } from "@/lib/tmdb";
+import { MovieCard } from "./movie-card";
 
 export interface Movie {
   id: number;
@@ -16,15 +17,7 @@ function ShowMovies() {
       </div>
       <div className="grid w-full grid-cols-5 gap-5">
         {(movies || []).slice(0, 5).map((movie: Movie) => {
-          return (
-            <div key={movie.id} className="">
-              <img
-                className="w-full rounded-lg bg-cover"
-                src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-                alt={movie.original_title}
-              />
-            </div>
-          );
+          return <MovieCard key={movie.id} movie={movie} isLast={false} />;
         })}
       </div>
     </div>

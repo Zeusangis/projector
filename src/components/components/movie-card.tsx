@@ -16,24 +16,27 @@ export function MovieCard({
   return (
     <div
       key={movie.id}
-      className="relative text-center cursor-pointer hover:scale-105 transition-transform duration-300"
+      className="relative text-center rounded-lg cursor-pointer overflow-hidden transition-transform duration-300 group "
       ref={isLast ? lastMovieRef : undefined}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <img
-        className="w-full rounded-lg bg-cover"
+        className="w-full bg-cover group-hover:scale-105 z-40 transition-transform duration-300"
         src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
         alt={movie.original_title}
       />
+
       <div
-        className={`${hovered ? "" : "hidden"} absolute bottom-0 w-full z-64 text-center text-white text-lg font-semibold py-2 bg-white/30 backdrop-blur-md rounded-b-lg`}
+        className={`${hovered ? "" : "hidden"} absolute h-80 bottom-0 w-full z-64 text-center text-white text-lg font-semibold py-2 bg-gradient-to-t from-black to-transparent space-y-4 rounded-b-lg transition duration-300`}
       >
-        <span className="block">{movie.original_title}</span>
-        <div className="px-4">
-          <Button className="w-full bg-white h-10 hover:bg-gray-200 cursor-pointer text-black">
-            Watch Now
-          </Button>
+        <div className="h-full w-full flex items-center justify-end flex-col space-y-4 px-3">
+          <span className="block">{movie.original_title}</span>
+          <div className="w-full">
+            <Button className="w-full rounded-full z-5 bg-white h-10 hover:bg-gray-200 cursor-pointer text-gray-800 flex items-center justify-center">
+              <a href={`movie/${movie.id}`}>Watch Now</a>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

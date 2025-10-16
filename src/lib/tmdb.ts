@@ -31,3 +31,23 @@ export const useGetMovies = () => {
     queryFn: () => getMovies({}),
   });
 };
+
+export const useGetMoviesById = (movieId: string) => {
+  return useQuery({
+    queryKey: ["movie", movieId],
+    queryFn: () => getMovieById(movieId),
+    enabled: !!movieId, // Only run query if movieId exists
+  });
+};
+const getMovieById = async (movieId: string) => {
+  const res = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+    params: {
+      language: "en-US",
+    },
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+  });
+  return res.data;
+};

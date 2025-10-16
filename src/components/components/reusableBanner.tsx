@@ -1,6 +1,5 @@
 import { Button } from "../ui/button";
 import { Play } from "lucide-react";
-import Navbar from "./navbar";
 
 interface ReusableBannerProps {
   // You can add props here if needed in the future

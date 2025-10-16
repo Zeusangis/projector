@@ -9,17 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SingleMovieRouteImport } from './routes/singleMovie'
 import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MovieIdRouteImport } from './routes/movie/$id'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
-const SingleMovieRoute = SingleMovieRouteImport.update({
-  id: '/singleMovie',
-  path: '/singleMovie',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MoviesRoute = MoviesRouteImport.update({
   id: '/movies',
   path: '/movies',
@@ -34,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MovieIdRoute = MovieIdRouteImport.update({
+  id: '/movie/$id',
+  path: '/movie/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -43,53 +43,46 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/movies': typeof MoviesRoute
-  '/singleMovie': typeof SingleMovieRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/movies': typeof MoviesRoute
-  '/singleMovie': typeof SingleMovieRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/movies': typeof MoviesRoute
-  '/singleMovie': typeof SingleMovieRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/movies' | '/singleMovie' | '/dashboard'
+  fullPaths: '/' | '/movies' | '/dashboard' | '/movie/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/movies' | '/singleMovie' | '/dashboard'
+  to: '/' | '/movies' | '/dashboard' | '/movie/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/movies'
-    | '/singleMovie'
     | '/_authenticated/dashboard'
+    | '/movie/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   MoviesRoute: typeof MoviesRoute
-  SingleMovieRoute: typeof SingleMovieRoute
+  MovieIdRoute: typeof MovieIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/singleMovie': {
-      id: '/singleMovie'
-      path: '/singleMovie'
-      fullPath: '/singleMovie'
-      preLoaderRoute: typeof SingleMovieRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/movies': {
       id: '/movies'
       path: '/movies'
@@ -109,6 +102,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/movie/$id': {
+      id: '/movie/$id'
+      path: '/movie/$id'
+      fullPath: '/movie/$id'
+      preLoaderRoute: typeof MovieIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -137,7 +137,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   MoviesRoute: MoviesRoute,
-  SingleMovieRoute: SingleMovieRoute,
+  MovieIdRoute: MovieIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

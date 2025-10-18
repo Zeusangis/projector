@@ -1,8 +1,10 @@
 import { Button } from "../ui/button";
 import { Play } from "lucide-react";
+import { MovieDetailsDialog } from "./movie-details";
 
 interface ReusableBannerProps {
   // You can add props here if needed in the future
+  movieId?: number | 1;
   backgroundImageUrl?: string;
   title?: string;
   overview?: string;
@@ -11,11 +13,11 @@ interface ReusableBannerProps {
 }
 
 function ReusableBanner({
+  movieId,
   backgroundImageUrl,
   title,
   overview,
   onWatchNowClick,
-  onDetailsClick,
 }: ReusableBannerProps) {
   return (
     <>
@@ -43,7 +45,7 @@ function ReusableBanner({
                 {overview?.slice(0, 180)}...
               </p>
             </div>
-            <div className="space-x-5">
+            <div className="flex space-x-5">
               <Button
                 onClick={onWatchNowClick}
                 className="!px-10 h-14 text-lg bg-white text-black cursor-pointer rounded-full hover:bg-gray-200 "
@@ -51,13 +53,7 @@ function ReusableBanner({
                 <span> Watch Now</span>
                 <Play className="ml-2 h-4 w-4" />
               </Button>
-              <Button
-                onClick={onDetailsClick}
-                className="!px-10 h-14 text-lg rounded-full bg-neutral-900 text-white hover:bg-neutral-800 cursor-pointer transition"
-              >
-                Details
-                <span className="text-lg">›</span>
-              </Button>
+              <MovieDetailsDialog movieId={movieId ?? 1} />
             </div>
           </div>
         </div>

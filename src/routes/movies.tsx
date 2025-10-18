@@ -43,7 +43,7 @@ function RouteComponent() {
         <div className="text-white text-start text-4xl font-bold py-5">
           Most Popular Movies
         </div>
-        <div className="grid grid-cols-5 gap-5 ">
+        <div className="grid grid-cols-3 lg:grid-cols-5 gap-5 ">
           {(movies?.pages.flatMap((page) => page.results) || []).map(
             (movie: Movie, idx: number, arr: Movie[]) => {
               const isLast = idx === arr.length - 1;

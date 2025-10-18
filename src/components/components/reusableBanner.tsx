@@ -36,7 +36,7 @@ function ReusableBanner({
       </div>
 
       {/* Content */}
-      <div className="flex items-center container mx-auto relative z-10 h-full -mt-32">
+      <div className="flex items-center container mx-auto relative z-10 h-full -mt-32 ">
         <div className=" max-w-2xl px-4">
           <div className="flex flex-col text-start gap-4">
             <div className="text-white">
@@ -53,7 +53,7 @@ function ReusableBanner({
                 <span> Watch Now</span>
                 <Play className="ml-2 h-4 w-4" />
               </Button>
-              <MovieDetailsDialog movieId={movieId ?? 1} />
+              <MovieDetailsDialog movieId={movieId ?? 1} mode="banner" />
             </div>
           </div>
         </div>

@@ -13,7 +13,6 @@ import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MovieIdRouteImport } from './routes/movie/$id'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const MoviesRoute = MoviesRouteImport.update({
   id: '/movies',
@@ -34,49 +33,35 @@ const MovieIdRoute = MovieIdRouteImport.update({
   path: '/movie/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/movies': typeof MoviesRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
   '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/movies': typeof MoviesRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
   '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRoute
   '/movies': typeof MoviesRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/movies' | '/dashboard' | '/movie/$id'
+  fullPaths: '/' | '/movies' | '/movie/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/movies' | '/dashboard' | '/movie/$id'
-  id:
-    | '__root__'
-    | '/'
-    | '/_authenticated'
-    | '/movies'
-    | '/_authenticated/dashboard'
-    | '/movie/$id'
+  to: '/' | '/movies' | '/movie/$id'
+  id: '__root__' | '/' | '/_authenticated' | '/movies' | '/movie/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRoute
   MoviesRoute: typeof MoviesRoute
   MovieIdRoute: typeof MovieIdRoute
 }
@@ -111,31 +96,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MovieIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
   }
 }
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-}
-
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-}
-
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRoute,
   MoviesRoute: MoviesRoute,
   MovieIdRoute: MovieIdRoute,
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Movie } from "./showMovies";
-import { Button } from "../ui/button";
+import { MovieDetailsDialog } from "./movie-details";
 
 export function MovieCard({
   movie,
@@ -32,10 +32,8 @@ export function MovieCard({
       >
         <div className="h-full w-full flex items-center justify-end flex-col space-y-4 px-3">
           <span className="block">{movie.original_title}</span>
-          <div className="w-full">
-            <Button className="w-full rounded-full z-5 bg-white h-10 hover:bg-gray-200 cursor-pointer text-gray-800 flex items-center justify-center">
-              <a href={`movie/${movie.id}`}>Watch Now</a>
-            </Button>
+          <div className="w-full z-90">
+            <MovieDetailsDialog movieId={movie.id} />
           </div>
         </div>
       </div>

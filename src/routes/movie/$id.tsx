@@ -23,11 +23,11 @@ function SingleMovieComponent() {
       <div>Title: {movie.title}</div>
       {/* Add more movie details as needed */}
       <div>
-        {/* <video
-          className="w-full h-auto"
-          controls
-          src={`https://vidsrc.xyz/embed/movie?imdb=${id}`}
-        /> */}
+        <iframe
+          className="w-full h-[80vh] rounded-lg"
+          src={`https://vidsrc.xyz/embed/movie?tmdb=${id}`}
+          allowFullScreen
+        ></iframe>
       </div>
     </div>
   );

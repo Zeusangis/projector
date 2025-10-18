@@ -23,9 +23,9 @@ function RouteComponent() {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          if (hasNextPage && !isFetchingNextPage) {
+          setTimeout(() => {
             fetchNextPage();
-          }
+          }, 500);
         }
       });
       if (node) observer.current.observe(node);
@@ -59,6 +59,7 @@ function RouteComponent() {
           )}
         </div>
       </div>
+      <div className="loader flex justify-center items-center mx-auto my-10"></div>
     </div>
   );
 }

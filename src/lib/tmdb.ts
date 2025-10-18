@@ -32,11 +32,14 @@ export const useGetMovies = () => {
   });
 };
 
-export const useGetMoviesById = (movieId: string) => {
+export const useGetMoviesById = (
+  movieId: string,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: ["movie", movieId],
     queryFn: () => getMovieById(movieId),
-    enabled: !!movieId, // Only run query if movieId exists
+    enabled: !!movieId && options?.enabled, // Only run query if movieId exists
   });
 };
 const getMovieById = async (movieId: string) => {

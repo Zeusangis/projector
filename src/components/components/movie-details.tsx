@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,28 +8,33 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useGetMoviesById } from "@/lib/tmdb";
+
 export const MovieDetailsDialog = ({ movieId }: { movieId: number }) => {
-  const movie = useGetMoviesById(movieId.toString()).data;
+  const [open, setOpen] = useState(false);
+
+  // Only fetch when dialog is open
+  const movie = useGetMoviesById(movieId.toString(), { enabled: open }).data;
 
   return (
-    <div>
-      <Dialog>
-        <DialogTrigger>
-          <a className="!px-10 h-14 text-lg rounded-full bg-neutral-900 text-white hover:bg-neutral-800 cursor-pointer transition">
-            Details
-            <span className="text-lg">›</span>
-          </a>
-        </DialogTrigger>
-        <DialogContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger className="px-10 h-14 text-lg rounded-full bg-neutral-900 text-white hover:bg-neutral-800 cursor-pointer transition">
+        <div className="flex items-center space-x-2">
+          <span>Details</span>
+          <span className="text-lg">›</span>
+        </div>
+      </DialogTrigger>
+      <DialogContent>
+        {movie ? (
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </DialogDescription>
+            <DialogTitle>{movie.title}</DialogTitle>
+            <DialogDescription>{movie.overview}</DialogDescription>
           </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    </div>
+        ) : (
+          <DialogHeader>
+            <DialogTitle>Loading...</DialogTitle>
+          </DialogHeader>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };

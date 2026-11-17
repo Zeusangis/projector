@@ -11,7 +11,7 @@ export function Logo({ className }: { className?: string }) {
     <Link to="/" className={cn("group flex items-center gap-2", className)} aria-label="Projector home">
       {/* The lamp: a small amber light with its beam. */}
       <svg viewBox="0 0 28 20" className="h-5 w-7" aria-hidden>
-        <path d="M9 10 L28 2 L28 18 Z" className="fill-lamp/25 transition-[fill-opacity] duration-300 can-hover:group-hover:fill-lamp/45" />
+        <path d="M9 10 L28 2 L28 18 Z" className="fill-lamp opacity-25 transition-opacity duration-300 ease-[var(--ease-out)] can-hover:group-hover:opacity-50" />
         <circle cx="7" cy="10" r="6" className="fill-lamp" />
         <circle cx="7" cy="10" r="2.4" className="fill-velvet" />
       </svg>
@@ -38,14 +38,16 @@ export function Navbar() {
   }, []);
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top)] transition-[background-color,box-shadow,backdrop-filter] duration-300",
-        scrolled
-          ? "bg-velvet/80 shadow-[0_1px_0_rgb(243_236_228/0.06)] backdrop-blur-xl"
-          : "bg-gradient-to-b from-velvet/70 to-transparent"
-      )}
-    >
+    <header className="fixed inset-x-0 top-0 z-40 pt-[env(safe-area-inset-top)]">
+      {/* Two fixed backgrounds, crossfaded with opacity: nothing else animates. */}
+      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-velvet/70 to-transparent" />
+      <div
+        aria-hidden
+        className={cn(
+          "absolute inset-0 -z-10 bg-velvet/85 shadow-[0_1px_0_rgb(243_236_228/0.06)] backdrop-blur-xl transition-opacity duration-300 ease-[var(--ease-out)]",
+          scrolled ? "opacity-100" : "opacity-0"
+        )}
+      />
       <nav className="flex h-16 items-center gap-8 px-[var(--gutter)]" aria-label="Main">
         <Logo />
         <ul className="hidden items-center gap-6 text-[15px] sm:flex">
@@ -54,7 +56,7 @@ export function Navbar() {
               <Link
                 to={l.to}
                 activeOptions={{ exact: l.exact, includeSearch: false }}
-                className="relative py-2 text-dim transition-colors duration-200 can-hover:hover:text-screen data-[status=active]:text-screen after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-lamp after:transition-transform after:duration-300 after:ease-[var(--ease-out)] data-[status=active]:after:scale-x-100"
+                className="relative py-2 text-dim can-hover:hover:text-screen data-[status=active]:text-screen after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-lamp after:transition-transform after:duration-300 after:ease-[var(--ease-out)] data-[status=active]:after:scale-x-100"
               >
                 {l.label}
               </Link>
@@ -66,7 +68,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={open}
-            className="flex h-10 items-center gap-2 rounded-full px-3 text-dim transition-[background-color,color] duration-200 can-hover:hover:bg-screen/10 can-hover:hover:text-screen sm:bg-screen/[0.07] sm:pr-2 sm:pl-3.5"
+            className="flex h-10 items-center gap-2 rounded-full px-3 text-dim transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97] can-hover:hover:bg-screen/10 can-hover:hover:text-screen sm:bg-screen/[0.07] sm:pr-2 sm:pl-3.5"
           >
             <Search className="size-[18px]" />
             <span className="hidden text-sm sm:inline">Search</span>
@@ -84,7 +86,7 @@ export function Navbar() {
 export function MobileTabs() {
   const { open } = useSearchPalette();
   const item =
-    "flex flex-1 flex-col items-center gap-1 pt-2.5 text-[11px] text-faint transition-colors duration-200 active:scale-95 data-[status=active]:text-lamp";
+    "flex min-h-12 flex-1 flex-col items-center gap-1 pt-2.5 text-[11px] text-faint transition-transform duration-150 ease-[var(--ease-out)] active:scale-95 data-[status=active]:text-lamp";
   return (
     <nav
       aria-label="Main"
@@ -100,7 +102,7 @@ export function MobileTabs() {
         <Search className="size-5" />
         Search
       </button>
-      <Link to="/list" className={item}>
+      <Link to="/list" activeOptions={{ includeSearch: false }} className={item}>
         <Bookmark className="size-5" />
         My list
       </Link>

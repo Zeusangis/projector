@@ -74,7 +74,7 @@ export type SortKey =
 
 /* ---------- Images ---------- */
 
-type ImageSize = "w185" | "w342" | "w500" | "w780" | "w1280" | "original";
+type ImageSize = "w92" | "w185" | "w342" | "w500" | "w780" | "w1280";
 
 export function img(path: string | null | undefined, size: ImageSize) {
   return path ? `https://image.tmdb.org/t/p/${size}${path}` : undefined;
@@ -86,10 +86,13 @@ export function posterSrcSet(path: string | null | undefined) {
   return `${img(path, "w185")} 185w, ${img(path, "w342")} 342w, ${img(path, "w500")} 500w`;
 }
 
-/** srcSet for a backdrop: 780 on phones, 1280 on laptops, original on big screens. */
+/**
+ * srcSet for a backdrop: 780 on phones, 1280 everywhere else. "original" can be
+ * a 4K file of several megabytes, and behind gradients nobody sees the difference.
+ */
 export function backdropSrcSet(path: string | null | undefined) {
   if (!path) return undefined;
-  return `${img(path, "w780")} 780w, ${img(path, "w1280")} 1280w, ${img(path, "original")} 1920w`;
+  return `${img(path, "w780")} 780w, ${img(path, "w1280")} 1280w`;
 }
 
 /* ---------- Pagination ---------- */

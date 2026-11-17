@@ -117,7 +117,7 @@ function Palette({ onDone }: { onDone: () => void }) {
           enterKeyHint="search"
           autoComplete="off"
           spellCheck={false}
-          className="h-14 w-full bg-transparent text-base text-screen placeholder:text-faint outline-none"
+          className="h-14 w-full min-w-0 bg-transparent text-base text-screen placeholder:text-faint outline-none"
         />
         <span className={cn("beam w-10 shrink-0 transition-opacity", isFetching && searching ? "opacity-100" : "opacity-0")} />
       </div>
@@ -152,7 +152,9 @@ function Palette({ onDone }: { onDone: () => void }) {
                   {movie.poster_path ? (
                     <img src={img(movie.poster_path, "w185")} alt="" loading="lazy" className="size-full object-cover" />
                   ) : (
-                    <Film className="m-auto mt-4 size-5 text-faint" />
+                    <span className="grid size-full place-items-center">
+                      <Film className="size-5 text-faint" aria-hidden />
+                    </span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">

@@ -19,7 +19,12 @@ function Home() {
 
   return (
     <>
-      <Hero movies={trending.data} isLoading={trending.isLoading} />
+      <Hero
+        movies={trending.data}
+        isLoading={trending.isLoading}
+        isError={trending.isError}
+        onRetry={() => trending.refetch()}
+      />
       <div className="relative z-10 -mt-6">
         <Rail
           title="Top 10 this week"

@@ -3,7 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Link } from "@tanstack/react-router";
 import { Check, Play, Plus, Star, X } from "lucide-react";
 
-import { img, useMovie, type Movie } from "@/lib/tmdb";
+import { backdropSrcSet, img, useMovie, type Movie } from "@/lib/tmdb";
 import { rating, runtime, year } from "@/lib/format";
 import { useMyList, type SavedMovie } from "@/lib/my-list";
 
@@ -72,8 +72,11 @@ function DialogBody({
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-curtain sm:aspect-[2.2/1]">
         {backdrop && (
           <img
-            src={img(backdrop, "w1280")}
+            src={img(backdrop, "w780")}
+            srcSet={backdropSrcSet(backdrop)}
+            sizes="(min-width: 640px) 52rem, 100vw"
             alt=""
+            decoding="async"
             className="absolute inset-0 size-full object-cover animate-fade"
           />
         )}
@@ -84,8 +87,8 @@ function DialogBody({
         </DialogPrimitive.Close>
       </div>
 
-      <div className="relative -mt-16 px-5 pb-7 sm:-mt-20 sm:px-9 sm:pb-9">
-        <DialogPrimitive.Title className="font-display text-3xl leading-[1.02] font-extrabold tracking-tight sm:text-5xl">
+      <div className="relative -mt-16 px-5 pb-[max(1.75rem,calc(env(safe-area-inset-bottom)+1rem))] sm:-mt-20 sm:px-9 sm:pb-9">
+        <DialogPrimitive.Title className="font-display text-3xl leading-[1.02] font-extrabold tracking-tight [overflow-wrap:anywhere] sm:text-5xl">
           {title}
         </DialogPrimitive.Title>
 

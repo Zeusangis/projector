@@ -1,11 +1,12 @@
 import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 import { useMemo } from "react";
 
-import { img, useMovieList, useTrending } from "@/lib/tmdb";
+import { img, posterSrcSet, useMovieList, useTrending } from "@/lib/tmdb";
 
 /**
- * Signed-out front door: a slow wall of this week's posters behind the
- * invitation, like the lobby of a cinema.
+ * Signed-out front door: a wall of this week's posters behind the invitation,
+ * like the lobby of a cinema. It stays still: motion is kept for things the
+ * user does.
  */
 export function Landing() {
   const { data: trending } = useTrending();
@@ -26,15 +27,19 @@ export function Landing() {
         {columns.map((col, c) => (
           <div
             key={c}
-            className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4 motion-safe:animate-[drift_80s_linear_infinite_alternate]"
-            style={{ animationDelay: `${-c * 9}s`, marginTop: c % 2 ? "-6rem" : "-2rem" }}
+            className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4"
+            style={{ marginTop: c % 2 ? "-6rem" : "-2rem" }}
           >
-            {[...col, ...col].map((m, i) => (
+            {col.map((m, i) => (
               <img
-                key={`${m.id}-${i}`}
-                src={img(m.poster_path, "w342")}
+                key={m.id}
+                src={img(m.poster_path, "w185")}
+                srcSet={posterSrcSet(m.poster_path)}
+                sizes="17vw"
                 alt=""
-                className="aspect-[2/3] w-full rounded-lg object-cover"
+                loading={i < 3 ? "eager" : "lazy"}
+                decoding="async"
+                className="aspect-[2/3] w-full rounded-lg bg-seat object-cover"
               />
             ))}
           </div>

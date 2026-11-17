@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Check, Play, Plus, Star } from "lucide-react";
+import { Check, Film, Play, Plus, Star } from "lucide-react";
 
 import { backdropSrcSet, img, movieQuery, posterSrcSet } from "@/lib/tmdb";
 import { rating, runtime, year } from "@/lib/format";
@@ -38,7 +38,13 @@ function MoviePage() {
 
   return (
     <article>
-      <div className="relative isolate h-[min(72svh,46rem)] min-h-[26rem] overflow-hidden">
+      <div
+        className={
+          "relative isolate overflow-hidden " +
+          // No backdrop: no tall empty frame, just room for the header.
+          (movie.backdrop_path ? "h-[min(72svh,46rem)] min-h-[26rem]" : "h-[22rem] sm:h-[26rem]")
+        }
+      >
         {movie.backdrop_path && (
           <img
             src={img(movie.backdrop_path, "w1280")}
@@ -46,33 +52,45 @@ function MoviePage() {
             sizes="100vw"
             alt=""
             fetchPriority="high"
-            className="absolute inset-0 -z-10 size-full animate-shutter object-cover"
+            className="absolute inset-0 -z-10 size-full animate-fade object-cover"
           />
         )}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-velvet via-velvet/50 to-velvet/20" />
       </div>
 
       <div className="relative -mt-56 grid gap-8 px-[var(--gutter)] sm:-mt-64 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-12 lg:grid-cols-[minmax(0,18rem)_1fr]">
-        <div className="hidden md:block">
-          {movie.poster_path && (
+        <div className="hidden animate-lift md:block">
+          {movie.poster_path ? (
             <img
-              src={img(movie.poster_path, "w500")}
+              src={img(movie.poster_path, "w342")}
               srcSet={posterSrcSet(movie.poster_path)}
               sizes="18rem"
               alt={`${movie.title} poster`}
-              className="aspect-[2/3] w-full animate-rise rounded-xl object-cover shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8)] [animation-delay:350ms]"
+              className="aspect-[2/3] w-full rounded-xl object-cover shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8)]"
             />
+          ) : (
+            <div className="flex aspect-[2/3] w-full flex-col justify-between rounded-xl bg-curtain p-5 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8)]">
+              <Film className="size-6 text-faint" aria-hidden />
+              <span className="line-clamp-6 font-display text-2xl leading-tight font-bold text-dim [overflow-wrap:anywhere]">
+                {movie.title}
+              </span>
+            </div>
           )}
         </div>
 
-        <div className="min-w-0 self-end">
-          <h1 className="animate-rise font-display text-[clamp(2.5rem,6.5vw,5.5rem)] leading-[0.92] font-extrabold tracking-[-0.035em] [animation-delay:420ms]">
+        <div className="min-w-0 animate-lift self-end [animation-delay:40ms]">
+          <h1
+            className={
+              "font-display leading-[0.92] font-extrabold tracking-[-0.035em] [overflow-wrap:anywhere] " +
+              (movie.title.length > 32
+                ? "text-[clamp(2rem,5vw,4.25rem)]"
+                : "text-[clamp(2.5rem,6.5vw,5.5rem)]")
+            }
+          >
             {movie.title}
           </h1>
-          {movie.tagline && (
-            <p className="mt-3 animate-rise text-lg text-dim [animation-delay:480ms]">{movie.tagline}</p>
-          )}
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-dim animate-rise [animation-delay:520ms]">
+          {movie.tagline && <p className="mt-3 text-lg text-dim">{movie.tagline}</p>}
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-dim">
             {score && (
               <span className="inline-flex items-center gap-1 font-semibold text-lamp">
                 <Star className="size-3.5 fill-current" />
@@ -84,13 +102,13 @@ function MoviePage() {
             {movie.runtime ? <span>{runtime(movie.runtime)}</span> : null}
           </div>
           {movie.genres.length > 0 && (
-            <ul className="mt-5 flex flex-wrap gap-2 animate-rise [animation-delay:560ms]">
+            <ul className="mt-5 flex flex-wrap gap-2">
               {movie.genres.map((g) => (
                 <li key={g.id}>
                   <Link
                     to="/movies"
                     search={{ genre: g.id }}
-                    className="block rounded-full px-3.5 py-1.5 text-sm text-dim shadow-[inset_0_0_0_1px_rgb(243_236_228/0.14)] transition-[background-color,color] duration-200 active:scale-[0.97] can-hover:hover:bg-screen/[0.06] can-hover:hover:text-screen"
+                    className="block rounded-full px-3.5 py-1.5 text-sm text-dim shadow-[inset_0_0_0_1px_rgb(243_236_228/0.14)] transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97] can-hover:hover:bg-screen/[0.06] can-hover:hover:text-screen"
                   >
                     {g.name}
                   </Link>
@@ -98,11 +116,18 @@ function MoviePage() {
               ))}
             </ul>
           )}
-          <div className="mt-7 flex flex-wrap gap-3 animate-rise [animation-delay:600ms]">
-            <a href="#player" className="btn btn-primary">
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link
+              to="/movie/$id"
+              params={{ id }}
+              search={{ play: true }}
+              replace
+              resetScroll={false}
+              className="btn btn-primary"
+            >
               <Play className="size-4 fill-current" />
               Play
-            </a>
+            </Link>
             <button type="button" onClick={() => toggle(movie)} aria-pressed={saved} className="btn btn-ghost">
               {saved ? <Check className="size-4" /> : <Plus className="size-4" />}
               {saved ? "In my list" : "Add to my list"}
@@ -117,7 +142,7 @@ function MoviePage() {
         </div>
       </div>
 
-      <Player key={movie.id} id={movie.id} title={movie.title} backdrop={movie.backdrop_path} autoplay={!!play} />
+      <Player key={movie.id} id={movie.id} title={movie.title} backdrop={movie.backdrop_path} play={!!play} />
 
       {cast.length > 0 && (
         <section className="mt-16" aria-label="Cast">
@@ -134,8 +159,8 @@ function MoviePage() {
                     </span>
                   )}
                 </div>
-                <p className="mt-2.5 text-sm leading-tight font-medium">{c.name}</p>
-                <p className="mt-0.5 text-xs leading-tight text-faint">{c.character}</p>
+                <p className="mt-2.5 line-clamp-2 text-sm leading-tight font-medium [overflow-wrap:anywhere]">{c.name}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs leading-tight text-faint [overflow-wrap:anywhere]">{c.character}</p>
               </li>
             ))}
           </ul>
@@ -153,34 +178,29 @@ function MoviePage() {
 
 /**
  * The player only loads when asked for, so opening a film page doesn't start a
- * third-party embed in the background.
+ * third-party embed in the background. `?play=true` (from any Play button)
+ * starts it and brings it into view.
  */
 function Player({
   id,
   title,
   backdrop,
-  autoplay,
+  play,
 }: {
   id: number;
   title: string;
   backdrop: string | null;
-  autoplay: boolean;
+  play: boolean;
 }) {
-  const [on, setOn] = useState(autoplay);
+  const [clicked, setClicked] = useState(false);
+  const on = play || clicked;
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const start = () => {
-      if (window.location.hash === "#player") setOn(true);
-    };
-    start();
-    window.addEventListener("hashchange", start);
-    return () => window.removeEventListener("hashchange", start);
-  }, []);
-
-  useEffect(() => {
-    if (autoplay) ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [autoplay]);
+    if (!play) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    ref.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  }, [play]);
 
   return (
     <section id="player" ref={ref} className="mt-16 scroll-mt-24 px-[var(--gutter)]" aria-label={`Watch ${title}`}>
@@ -195,11 +215,14 @@ function Player({
             className="size-full animate-fade"
           />
         ) : (
-          <button type="button" onClick={() => setOn(true)} className="group absolute inset-0 grid place-items-center">
+          <button type="button" onClick={() => setClicked(true)} className="group absolute inset-0 grid place-items-center">
             {backdrop && (
               <img
-                src={img(backdrop, "w1280")}
+                src={img(backdrop, "w780")}
+                srcSet={backdropSrcSet(backdrop)}
+                sizes="(min-width: 1152px) 72rem, 100vw"
                 alt=""
+                decoding="async"
                 loading="lazy"
                 className="absolute inset-0 size-full object-cover opacity-50 transition-opacity duration-300 can-hover:group-hover:opacity-65"
               />

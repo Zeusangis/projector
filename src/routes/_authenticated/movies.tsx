@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
@@ -54,9 +54,14 @@ function Browse() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Different pages can repeat a film when popularity shifts between requests.
-  const movies = (data?.pages.flatMap((p) => p.results) ?? []).filter(
-    (m, i, all) => all.findIndex((x) => x.id === m.id) === i
-  );
+  const movies = useMemo(() => {
+    const seen = new Set<number>();
+    return (data?.pages.flatMap((p) => p.results) ?? []).filter((m) => {
+      if (seen.has(m.id)) return false;
+      seen.add(m.id);
+      return true;
+    });
+  }, [data]);
   const genreName = genres?.find((g) => g.id === genre)?.name;
 
   return (
@@ -80,7 +85,7 @@ function Browse() {
               aria-checked={sort === s.key}
               resetScroll={false}
               className={cn(
-                "rounded-full px-4 py-2 text-sm font-medium transition-[background-color,color] duration-200 active:scale-[0.97]",
+                "rounded-full px-4 py-2 text-sm font-medium transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97]",
                 sort === s.key ? "bg-screen text-velvet" : "text-dim can-hover:hover:text-screen"
               )}
             >
@@ -115,7 +120,12 @@ function Browse() {
         )}
 
         {!isLoading && !isError && movies.length === 0 && (
-          <p className="py-16 text-lg text-dim">No films match this filter. Pick another genre.</p>
+          <div className="py-16">
+            <p className="text-lg text-dim">No films match this filter.</p>
+            <Link to="/movies" search={{}} className="btn btn-ghost mt-6">
+              Show all films
+            </Link>
+          </div>
         )}
         {!hasNextPage && movies.length > 0 && (
           <p className="pt-14 text-center text-sm text-faint">That's every film for this filter.</p>
@@ -134,7 +144,7 @@ function GenreChip({ active, label, genre }: { active: boolean; label: string; g
       resetScroll={false}
       aria-current={active ? "true" : undefined}
       className={cn(
-        "shrink-0 rounded-full px-4 py-2 text-sm transition-[background-color,color,box-shadow] duration-200 active:scale-[0.97]",
+        "shrink-0 rounded-full px-4 py-2 text-sm transition-transform duration-150 ease-[var(--ease-out)] active:scale-[0.97]",
         active
           ? "bg-lamp font-semibold text-velvet"
           : "text-dim shadow-[inset_0_0_0_1px_rgb(243_236_228/0.14)] can-hover:hover:bg-screen/[0.06] can-hover:hover:text-screen"

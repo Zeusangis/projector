@@ -32,10 +32,10 @@ export function Rail({
   const measure = useCallback(() => {
     const el = scroller.current;
     if (!el) return;
-    setEdges({
-      start: el.scrollLeft < 8,
-      end: el.scrollLeft + el.clientWidth > el.scrollWidth - 8,
-    });
+    const start = el.scrollLeft < 8;
+    const end = el.scrollLeft + el.clientWidth > el.scrollWidth - 8;
+    // Scroll fires every frame; only re-render the row when an edge actually changes.
+    setEdges((prev) => (prev.start === start && prev.end === end ? prev : { start, end }));
   }, []);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export function Rail({
         {more && (
           <Link
             {...more.link}
-            className="relative shrink-0 text-sm text-dim transition-colors duration-200 can-hover:hover:text-screen after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-[var(--ease-out)] can-hover:hover:after:scale-x-100"
+            className="relative shrink-0 text-sm text-dim can-hover:hover:text-screen after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-[var(--ease-out)] can-hover:hover:after:scale-x-100"
           >
             {more.label}
           </Link>

@@ -1,9 +1,25 @@
+# Packages and build output
 node_modules
-.DS_Store
 dist
 dist-ssr
-*.local
-count.txt
-.env
 .nitro
 .tanstack
+
+# Secrets: keep every .env file out of git, except the template
+.env
+.env.*
+!.env.example
+*.local
+
+# Vercel (created by `vercel link` / `vercel dev`)
+.vercel
+
+# Logs
+*.log
+npm-debug.log*
+count.txt
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store

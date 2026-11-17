@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { rating, runtime, year } from "./format";
 
 describe("format", () => {
@@ -20,7 +20,6 @@ describe("format", () => {
 
 describe("nextPageParam", () => {
   it("stops at the last page, and never asks TMDB past page 500", async () => {
-    vi.stubEnv("VITE_TMDB_TOKEN", "test");
     const { nextPageParam } = await import("./tmdb");
     expect(nextPageParam({ page: 1, total_pages: 3 })).toBe(2);
     expect(nextPageParam({ page: 3, total_pages: 3 })).toBeUndefined();

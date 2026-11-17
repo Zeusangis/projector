@@ -7,17 +7,11 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 
-const token = import.meta.env.VITE_TMDB_TOKEN as string | undefined;
-
-if (!token) {
-  throw new Error(
-    "Add VITE_TMDB_TOKEN (your TMDB API Read Access Token) to the .env file",
-  );
-}
-
+// Requests go through our own /api/tmdb (api/tmdb.ts on Vercel, the Vite proxy
+// locally), which adds the TMDB token on the server. The browser never sees it.
 const tmdb = axios.create({
-  baseURL: "https://api.themoviedb.org/3",
-  headers: { accept: "application/json", Authorization: `Bearer ${token}` },
+  baseURL: "/api/tmdb",
+  headers: { accept: "application/json" },
   params: { language: "en-US" },
 });
 

@@ -68,7 +68,9 @@ You need [Node.js](https://nodejs.org) 20 or newer.
    | Key | Where to find it |
    |---|---|
    | `VITE_CLERK_PUBLISHABLE_KEY` | [Clerk dashboard](https://dashboard.clerk.com) → API keys |
-   | `VITE_TMDB_TOKEN` | [TMDB](https://www.themoviedb.org/settings/api) → Settings → API → **API Read Access Token** |
+   | `TMDB_TOKEN` | [TMDB](https://www.themoviedb.org/settings/api) → Settings → API → **API Read Access Token** |
+
+   `TMDB_TOKEN` stays on the server: the site asks `/api/tmdb`, which adds the token, so visitors never see it.
 
    Never put real keys in `.env.example`. Git saves that file; it ignores `.env`.
 
@@ -90,10 +92,12 @@ You need [Node.js](https://nodejs.org) 20 or newer.
 
 1. Sign in to [Vercel](https://vercel.com) with GitHub.
 2. Click **Add New → Project** and import this repo. Vercel finds the settings by itself.
-3. Under **Environment Variables**, add `VITE_CLERK_PUBLISHABLE_KEY` and `VITE_TMDB_TOKEN`.
+3. Under **Environment Variables**, add:
+   - `TMDB_TOKEN` as a **Secret**
+   - `VITE_CLERK_PUBLISHABLE_KEY` as **Config** (this key is meant to be public)
 4. Click **Deploy**.
 
-Every push to `main` updates the live site. `vercel.json` makes sure links like `/movie/27205` work when you refresh.
+Every push to `main` updates the live site. `vercel.json` makes sure links like `/movie/27205` work when you refresh, and sends `/api/tmdb/...` to the TMDB function in `api/tmdb.ts`.
 
 For a real launch, use a production instance in Clerk (its key starts with `pk_live_`) and add your site's address there.
 
@@ -111,7 +115,7 @@ For a real launch, use a production instance in Clerk (its key starts with `pk_l
 [React 19](https://react.dev) · [Vite](https://vite.dev) · TypeScript · [TanStack Router & Query](https://tanstack.com) · [Tailwind CSS 4](https://tailwindcss.com) · [Clerk](https://clerk.com) · [TMDB API](https://developer.themoviedb.org)
 
 - Pages live in `src/routes/`.
-- All TMDB requests are in `src/lib/tmdb.ts`.
+- All TMDB requests are in `src/lib/tmdb.ts`, and go through `api/tmdb.ts`.
 - Colours, fonts and animations are in `src/styles.css`.
 
 ## Credits

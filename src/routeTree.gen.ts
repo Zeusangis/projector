@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedMoviesRouteImport } from './routes/_authenticated/movies'
 import { Route as AuthenticatedListRouteImport } from './routes/_authenticated/list'
+import { Route as AuthenticatedMoviesRouteImport } from './routes/_authenticated/movies'
 import { Route as AuthenticatedMovieIdRouteImport } from './routes/_authenticated/movie/$id'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -24,14 +24,14 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedMoviesRoute = AuthenticatedMoviesRouteImport.update({
-  id: '/movies',
-  path: '/movies',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedListRoute = AuthenticatedListRouteImport.update({
   id: '/list',
   path: '/list',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMoviesRoute = AuthenticatedMoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedMovieIdRoute = AuthenticatedMovieIdRouteImport.update({
@@ -41,9 +41,9 @@ const AuthenticatedMovieIdRoute = AuthenticatedMovieIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
   '/list': typeof AuthenticatedListRoute
   '/movies': typeof AuthenticatedMoviesRoute
-  '/': typeof AuthenticatedIndexRoute
   '/movie/$id': typeof AuthenticatedMovieIdRoute
 }
 export interface FileRoutesByTo {
@@ -62,7 +62,7 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/list' | '/movies' | '/' | '/movie/$id'
+  fullPaths: '/' | '/list' | '/movies' | '/movie/$id'
   fileRoutesByTo: FileRoutesByTo
   to: '/list' | '/movies' | '/' | '/movie/$id'
   id:
@@ -83,7 +83,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -94,18 +94,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/movies': {
-      id: '/_authenticated/movies'
-      path: '/movies'
-      fullPath: '/movies'
-      preLoaderRoute: typeof AuthenticatedMoviesRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/list': {
       id: '/_authenticated/list'
       path: '/list'
       fullPath: '/list'
       preLoaderRoute: typeof AuthenticatedListRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/movies': {
+      id: '/_authenticated/movies'
+      path: '/movies'
+      fullPath: '/movies'
+      preLoaderRoute: typeof AuthenticatedMoviesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/movie/$id': {

@@ -11,7 +11,7 @@ const token = import.meta.env.VITE_TMDB_TOKEN as string | undefined;
 
 if (!token) {
   throw new Error(
-    "Add VITE_TMDB_TOKEN (your TMDB API Read Access Token) to the .env file"
+    "Add VITE_TMDB_TOKEN (your TMDB API Read Access Token) to the .env file",
   );
 }
 
@@ -20,6 +20,8 @@ const tmdb = axios.create({
   headers: { accept: "application/json", Authorization: `Bearer ${token}` },
   params: { language: "en-US" },
 });
+
+console.log(tmdb);
 
 /* ---------- Types ---------- */
 
@@ -98,7 +100,7 @@ export function backdropSrcSet(path: string | null | undefined) {
 /* ---------- Pagination ---------- */
 
 export function nextPageParam(
-  lastPage: Pick<Page<unknown>, "page" | "total_pages">
+  lastPage: Pick<Page<unknown>, "page" | "total_pages">,
 ) {
   // TMDB refuses pages past 500 even when total_pages is higher.
   const last = Math.min(lastPage.total_pages, 500);
@@ -142,6 +144,7 @@ export const movieQuery = (id: number) =>
       ).data,
     staleTime: STALE,
   });
+console.log(movieQuery);
 
 export const discoverQuery = ({
   genre,
@@ -174,6 +177,7 @@ export const discoverQuery = ({
     getNextPageParam: nextPageParam,
     staleTime: STALE,
   });
+console.log(discoverQuery);
 
 export const searchQuery = (query: string) =>
   queryOptions({
@@ -189,6 +193,7 @@ export const searchQuery = (query: string) =>
     staleTime: STALE,
     placeholderData: keepPreviousData,
   });
+console.log(searchQuery);
 
 /* ---------- Hooks ---------- */
 

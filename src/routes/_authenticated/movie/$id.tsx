@@ -42,7 +42,9 @@ function MoviePage() {
         className={
           "relative isolate overflow-hidden " +
           // No backdrop: no tall empty frame, just room for the header.
-          (movie.backdrop_path ? "h-[min(72svh,46rem)] min-h-[26rem]" : "h-[22rem] sm:h-[26rem]")
+          (movie.backdrop_path
+            ? "h-[min(72svh,46rem)] min-h-[26rem]"
+            : "h-[22rem] sm:h-[26rem]")
         }
       >
         {movie.backdrop_path && (
@@ -89,16 +91,22 @@ function MoviePage() {
           >
             {movie.title}
           </h1>
-          {movie.tagline && <p className="mt-3 text-lg text-dim">{movie.tagline}</p>}
+          {movie.tagline && (
+            <p className="mt-3 text-lg text-dim">{movie.tagline}</p>
+          )}
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-dim">
             {score && (
               <span className="inline-flex items-center gap-1 font-semibold text-lamp">
                 <Star className="size-3.5 fill-current" />
                 {score}
-                <span className="font-normal text-faint">({movie.vote_count.toLocaleString()} votes)</span>
+                <span className="font-normal text-faint">
+                  ({movie.vote_count.toLocaleString()} votes)
+                </span>
               </span>
             )}
-            {year(movie.release_date) && <span>{year(movie.release_date)}</span>}
+            {year(movie.release_date) && (
+              <span>{year(movie.release_date)}</span>
+            )}
             {movie.runtime ? <span>{runtime(movie.runtime)}</span> : null}
           </div>
           {movie.genres.length > 0 && (
@@ -128,12 +136,23 @@ function MoviePage() {
               <Play className="size-4 fill-current" />
               Play
             </Link>
-            <button type="button" onClick={() => toggle(movie)} aria-pressed={saved} className="btn btn-ghost">
-              {saved ? <Check className="size-4" /> : <Plus className="size-4" />}
+            <button
+              type="button"
+              onClick={() => toggle(movie)}
+              aria-pressed={saved}
+              className="btn btn-ghost"
+            >
+              {saved ? (
+                <Check className="size-4" />
+              ) : (
+                <Plus className="size-4" />
+              )}
               {saved ? "In my list" : "Add to my list"}
             </button>
           </div>
-          <p className="mt-8 max-w-[65ch] text-[17px] leading-relaxed text-screen/90">{movie.overview}</p>
+          <p className="mt-8 max-w-[65ch] text-[17px] leading-relaxed text-screen/90">
+            {movie.overview}
+          </p>
           {director && (
             <p className="mt-5 text-sm text-dim">
               Directed by <span className="text-screen">{director}</span>
@@ -142,25 +161,42 @@ function MoviePage() {
         </div>
       </div>
 
-      <Player key={movie.id} id={movie.id} title={movie.title} backdrop={movie.backdrop_path} play={!!play} />
+      <Player
+        key={movie.id}
+        id={movie.id}
+        title={movie.title}
+        backdrop={movie.backdrop_path}
+        play={!!play}
+      />
 
       {cast.length > 0 && (
         <section className="mt-16" aria-label="Cast">
-          <h2 className="px-[var(--gutter)] font-display text-xl font-bold tracking-tight sm:text-2xl">Cast</h2>
+          <h2 className="px-[var(--gutter)] font-display text-xl font-bold tracking-tight sm:text-2xl">
+            Cast
+          </h2>
           <ul className="rail mt-5 flex gap-4 overflow-x-auto px-[var(--gutter)] pb-2">
             {cast.map((c) => (
               <li key={c.id} className="w-24 shrink-0 sm:w-28">
                 <div className="aspect-square overflow-hidden rounded-full bg-curtain">
                   {c.profile_path ? (
-                    <img src={img(c.profile_path, "w185")} alt="" loading="lazy" className="size-full object-cover" />
+                    <img
+                      src={img(c.profile_path, "w185")}
+                      alt=""
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
                   ) : (
                     <span className="grid size-full place-items-center font-display text-2xl font-bold text-faint">
                       {c.name.charAt(0)}
                     </span>
                   )}
                 </div>
-                <p className="mt-2.5 line-clamp-2 text-sm leading-tight font-medium [overflow-wrap:anywhere]">{c.name}</p>
-                <p className="mt-0.5 line-clamp-2 text-xs leading-tight text-faint [overflow-wrap:anywhere]">{c.character}</p>
+                <p className="mt-2.5 line-clamp-2 text-sm leading-tight font-medium [overflow-wrap:anywhere]">
+                  {c.name}
+                </p>
+                <p className="mt-0.5 line-clamp-2 text-xs leading-tight text-faint [overflow-wrap:anywhere]">
+                  {c.character}
+                </p>
               </li>
             ))}
           </ul>
@@ -198,16 +234,26 @@ function Player({
 
   useEffect(() => {
     if (!play) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    ref.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    ref.current?.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      block: "center",
+    });
   }, [play]);
 
   return (
-    <section id="player" ref={ref} className="mt-16 scroll-mt-24 px-[var(--gutter)]" aria-label={`Watch ${title}`}>
+    <section
+      id="player"
+      ref={ref}
+      className="mt-16 scroll-mt-24 px-[var(--gutter)]"
+      aria-label={`Watch ${title}`}
+    >
       <div className="relative mx-auto aspect-video max-w-6xl overflow-hidden rounded-2xl bg-black shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9)] ring-1 ring-screen/10">
         {on ? (
           <iframe
-            src={`https://vidsrc.xyz/embed/movie?tmdb=${id}`}
+            src={`https://vidsrc.mov/embed/movie/${id}`}
             title={`${title} player`}
             allowFullScreen
             allow="autoplay; fullscreen; picture-in-picture"
@@ -215,7 +261,11 @@ function Player({
             className="size-full animate-fade"
           />
         ) : (
-          <button type="button" onClick={() => setClicked(true)} className="group absolute inset-0 grid place-items-center">
+          <button
+            type="button"
+            onClick={() => setClicked(true)}
+            className="group absolute inset-0 grid place-items-center"
+          >
             {backdrop && (
               <img
                 src={img(backdrop, "w780")}
@@ -249,9 +299,12 @@ function MoviePending() {
 function MovieError() {
   return (
     <div className="px-[var(--gutter)] pt-36">
-      <h1 className="font-display text-4xl font-extrabold tracking-tight">We couldn't find that film.</h1>
+      <h1 className="font-display text-4xl font-extrabold tracking-tight">
+        We couldn't find that film.
+      </h1>
       <p className="mt-4 max-w-md text-lg text-dim">
-        The link may be wrong, or TMDB isn't responding. Search for it, or go back to the home page.
+        The link may be wrong, or TMDB isn't responding. Search for it, or go
+        back to the home page.
       </p>
       <Link to="/" className="btn btn-primary mt-8">
         Back to home

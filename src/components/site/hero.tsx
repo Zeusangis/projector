@@ -154,7 +154,13 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
       >
         <div className="max-w-2xl">
           <h1
-            className="animate-rise font-display text-[clamp(2.6rem,7vw,5.75rem)] leading-[0.92] font-extrabold tracking-[-0.035em] [animation-delay:380ms]"
+            title={movie.title}
+            className={cn(
+              "animate-rise font-display leading-[0.92] font-extrabold tracking-[-0.035em] [animation-delay:380ms] line-clamp-3 [overflow-wrap:anywhere]",
+              movie.title.length > 32
+                ? "text-[clamp(2.1rem,5vw,4.25rem)]"
+                : "text-[clamp(2.6rem,7vw,5.75rem)]"
+            )}
           >
             {movie.title}
           </h1>

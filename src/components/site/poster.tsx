@@ -63,8 +63,10 @@ export function Poster({
             className="size-full object-cover transition-transform duration-500 ease-[var(--ease-out)] can-hover:group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex size-full items-end p-3 font-display text-lg leading-tight font-bold text-dim">
-            {movie.title}
+          <div className="flex size-full items-end p-3">
+            <span className="line-clamp-5 font-display text-lg leading-tight font-bold text-dim [overflow-wrap:anywhere] hyphens-auto">
+              {movie.title}
+            </span>
           </div>
         )}
         {score && (

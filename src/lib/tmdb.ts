@@ -21,8 +21,6 @@ const tmdb = axios.create({
   params: { language: "en-US" },
 });
 
-console.log(tmdb);
-
 /* ---------- Types ---------- */
 
 export interface Movie {
@@ -144,7 +142,6 @@ export const movieQuery = (id: number) =>
       ).data,
     staleTime: STALE,
   });
-console.log(movieQuery);
 
 export const discoverQuery = ({
   genre,
@@ -177,7 +174,6 @@ export const discoverQuery = ({
     getNextPageParam: nextPageParam,
     staleTime: STALE,
   });
-console.log(discoverQuery);
 
 export const searchQuery = (query: string) =>
   queryOptions({
@@ -193,7 +189,6 @@ export const searchQuery = (query: string) =>
     staleTime: STALE,
     placeholderData: keepPreviousData,
   });
-console.log(searchQuery);
 
 /* ---------- Hooks ---------- */
 

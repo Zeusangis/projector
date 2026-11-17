@@ -3,7 +3,7 @@ import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, Film, Play, Plus, Star } from "lucide-react";
 
-import { backdropSrcSet, img, movieQuery, posterSrcSet } from "@/lib/tmdb";
+import { backdropSrcSet, img, movieQuery, posterSrcSet, trailerKey } from "@/lib/tmdb";
 import { rating, runtime, year } from "@/lib/format";
 import { useMyList } from "@/lib/my-list";
 import { Rail } from "@/components/site/rail";
@@ -142,7 +142,13 @@ function MoviePage() {
         </div>
       </div>
 
-      <Player key={movie.id} id={movie.id} title={movie.title} backdrop={movie.backdrop_path} play={!!play} />
+      <Player
+        key={movie.id}
+        trailer={trailerKey(movie.videos?.results)}
+        title={movie.title}
+        backdrop={movie.backdrop_path}
+        play={!!play}
+      />
 
       {cast.length > 0 && (
         <section className="mt-16" aria-label="Cast">
@@ -182,12 +188,12 @@ function MoviePage() {
  * starts it and brings it into view.
  */
 function Player({
-  id,
+  trailer,
   title,
   backdrop,
   play,
 }: {
-  id: number;
+  trailer: string | undefined;
   title: string;
   backdrop: string | null;
   play: boolean;
@@ -203,15 +209,22 @@ function Player({
   }, [play]);
 
   return (
-    <section id="player" ref={ref} className="mt-16 scroll-mt-24 px-[var(--gutter)]" aria-label={`Watch ${title}`}>
+    <section id="player" ref={ref} className="mt-16 scroll-mt-24 px-[var(--gutter)]" aria-label={`${title} trailer`}>
       <div className="relative mx-auto aspect-video max-w-6xl overflow-hidden rounded-2xl bg-black shadow-[0_40px_80px_-30px_rgb(0_0_0/0.9)] ring-1 ring-screen/10">
-        {on ? (
+        {!trailer ? (
+          <div className="absolute inset-0 grid place-items-center p-6 text-center">
+            {backdrop && (
+              <img src={img(backdrop, "w780")} alt="" loading="lazy" className="absolute inset-0 size-full object-cover opacity-30" />
+            )}
+            <p className="relative max-w-sm text-dim">TMDB has no trailer for {title} yet.</p>
+          </div>
+        ) : on ? (
           <iframe
-            src={`https://vidsrc.xyz/embed/movie?tmdb=${id}`}
-            title={`${title} player`}
+            src={`https://www.youtube-nocookie.com/embed/${trailer}?autoplay=1&rel=0`}
+            title={`${title} trailer`}
             allowFullScreen
             allow="autoplay; fullscreen; picture-in-picture"
-            referrerPolicy="origin"
+            referrerPolicy="strict-origin-when-cross-origin"
             className="size-full animate-fade"
           />
         ) : (
@@ -230,7 +243,7 @@ function Player({
             <span className="relative grid size-20 place-items-center rounded-full bg-screen text-velvet shadow-2xl transition-transform duration-200 ease-[var(--ease-out)] group-active:scale-95 can-hover:group-hover:scale-105">
               <Play className="ml-1 size-8 fill-current" />
             </span>
-            <span className="sr-only">Play {title}</span>
+            <span className="sr-only">Play the {title} trailer</span>
           </button>
         )}
       </div>

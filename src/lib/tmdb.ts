@@ -63,24 +63,6 @@ export interface MovieDetails extends Omit<Movie, "genre_ids"> {
   original_language: string;
   credits?: { cast: CastMember[]; crew: { job: string; name: string }[] };
   similar?: Page<Movie>;
-  videos?: { results: Video[] };
-}
-
-export interface Video {
-  key: string;
-  site: string;
-  type: string;
-  official: boolean;
-}
-
-/** The official YouTube trailer, falling back to any trailer or teaser. */
-export function trailerKey(videos: Video[] | undefined) {
-  const yt = (videos ?? []).filter((v) => v.site === "YouTube");
-  return (
-    yt.find((v) => v.type === "Trailer" && v.official) ??
-    yt.find((v) => v.type === "Trailer") ??
-    yt.find((v) => v.type === "Teaser")
-  )?.key;
 }
 
 export type MovieList = "popular" | "top_rated" | "now_playing" | "upcoming";
@@ -155,7 +137,7 @@ export const movieQuery = (id: number) =>
     queryFn: async () =>
       (
         await tmdb.get<MovieDetails>(`/movie/${id}`, {
-          params: { append_to_response: "credits,similar,videos" },
+          params: { append_to_response: "credits,similar" },
         })
       ).data,
     staleTime: STALE,

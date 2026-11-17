@@ -1,22 +1,35 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanstackDevtools } from '@tanstack/react-devtools'
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import { Suspense, lazy } from "react";
 
-export const Route = createRootRoute({
+// Devtools ship only in development builds.
+const Devtools = import.meta.env.DEV
+  ? lazy(async () => {
+      const [{ TanstackDevtools }, { TanStackRouterDevtoolsPanel }] =
+        await Promise.all([
+          import("@tanstack/react-devtools"),
+          import("@tanstack/react-router-devtools"),
+        ]);
+      return {
+        default: () => (
+          <TanstackDevtools
+            config={{ position: "bottom-left" }}
+            plugins={[
+              { name: "Tanstack Router", render: <TanStackRouterDevtoolsPanel /> },
+            ]}
+          />
+        ),
+      };
+    })
+  : () => null;
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: () => (
     <>
       <Outlet />
-      <TanstackDevtools
-        config={{
-          position: 'bottom-left',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
+      <Suspense>
+        <Devtools />
+      </Suspense>
     </>
   ),
-})
+});

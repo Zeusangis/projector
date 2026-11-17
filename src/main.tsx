@@ -2,58 +2,58 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// Import the generated route tree
-import { routeTree } from "./routeTree.gen";
-
-import "./styles.css";
-import reportWebVitals from "./reportWebVitals.ts";
-import { ThemeProvider } from "./components/theme-provider.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { dark } from "@clerk/themes";
 
-// Create a client for React Query
-const queryClient = new QueryClient();
+import { routeTree } from "./routeTree.gen";
+import "./styles.css";
 
-// Create a new router instance
-const router = createRouter({
-  routeTree,
-  context: {},
-  defaultPreload: "intent",
-  scrollRestoration: true,
-  defaultStructuralSharing: true,
-  defaultPreloadStaleTime: 0,
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
 });
 
-// Register the router instance for type safety
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
+  scrollRestoration: true,
+  defaultStructuralSharing: true,
+});
+
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
-  throw new Error("Add your Clerk Publishable Key to the .env file");
+  throw new Error("Add VITE_CLERK_PUBLISHABLE_KEY to the .env file");
 }
 
-// Render the app
 const rootElement = document.getElementById("app");
 if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <StrictMode>
-        <QueryClientProvider client={queryClient}>
-          <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-            <RouterProvider router={router} />
-          </ClerkProvider>
-        </QueryClientProvider>
-      </StrictMode>
-    </ThemeProvider>
+  ReactDOM.createRoot(rootElement).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <ClerkProvider
+          publishableKey={PUBLISHABLE_KEY}
+          appearance={{
+            baseTheme: dark,
+            variables: {
+              colorPrimary: "#f4b860",
+              colorBackground: "#22121a",
+              colorText: "#f3ece4",
+              colorTextOnPrimaryBackground: "#170b0e",
+              fontFamily: "Inter Tight Variable, system-ui, sans-serif",
+              borderRadius: "0.75rem",
+            },
+          }}
+        >
+          <RouterProvider router={router} />
+        </ClerkProvider>
+      </QueryClientProvider>
+    </StrictMode>
   );
 }
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

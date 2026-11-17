@@ -9,72 +9,77 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as MovieIdRouteImport } from './routes/movie/$id'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedMoviesRouteImport } from './routes/_authenticated/movies'
+import { Route as AuthenticatedListRouteImport } from './routes/_authenticated/list'
+import { Route as AuthenticatedMovieIdRouteImport } from './routes/_authenticated/movie/$id'
 
-const MoviesRoute = MoviesRouteImport.update({
-  id: '/movies',
-  path: '/movies',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const MovieIdRoute = MovieIdRouteImport.update({
+const AuthenticatedMoviesRoute = AuthenticatedMoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedListRoute = AuthenticatedListRouteImport.update({
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMovieIdRoute = AuthenticatedMovieIdRouteImport.update({
   id: '/movie/$id',
   path: '/movie/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/movies': typeof MoviesRoute
-  '/movie/$id': typeof MovieIdRoute
+  '/list': typeof AuthenticatedListRoute
+  '/movies': typeof AuthenticatedMoviesRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/movie/$id': typeof AuthenticatedMovieIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/movies': typeof MoviesRoute
-  '/movie/$id': typeof MovieIdRoute
+  '/list': typeof AuthenticatedListRoute
+  '/movies': typeof AuthenticatedMoviesRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/movie/$id': typeof AuthenticatedMovieIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRoute
-  '/movies': typeof MoviesRoute
-  '/movie/$id': typeof MovieIdRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/list': typeof AuthenticatedListRoute
+  '/_authenticated/movies': typeof AuthenticatedMoviesRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/movie/$id': typeof AuthenticatedMovieIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/movies' | '/movie/$id'
+  fullPaths: '/list' | '/movies' | '/' | '/movie/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/movies' | '/movie/$id'
-  id: '__root__' | '/' | '/_authenticated' | '/movies' | '/movie/$id'
+  to: '/list' | '/movies' | '/' | '/movie/$id'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/_authenticated/list'
+    | '/_authenticated/movies'
+    | '/_authenticated/'
+    | '/_authenticated/movie/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AuthenticatedRoute: typeof AuthenticatedRoute
-  MoviesRoute: typeof MoviesRoute
-  MovieIdRoute: typeof MovieIdRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/movies': {
-      id: '/movies'
-      path: '/movies'
-      fullPath: '/movies'
-      preLoaderRoute: typeof MoviesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -82,28 +87,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/movie/$id': {
-      id: '/movie/$id'
+    '/_authenticated/movies': {
+      id: '/_authenticated/movies'
+      path: '/movies'
+      fullPath: '/movies'
+      preLoaderRoute: typeof AuthenticatedMoviesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/list': {
+      id: '/_authenticated/list'
+      path: '/list'
+      fullPath: '/list'
+      preLoaderRoute: typeof AuthenticatedListRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/movie/$id': {
+      id: '/_authenticated/movie/$id'
       path: '/movie/$id'
       fullPath: '/movie/$id'
-      preLoaderRoute: typeof MovieIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedMovieIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedListRoute: typeof AuthenticatedListRoute
+  AuthenticatedMoviesRoute: typeof AuthenticatedMoviesRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedMovieIdRoute: typeof AuthenticatedMovieIdRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedListRoute: AuthenticatedListRoute,
+  AuthenticatedMoviesRoute: AuthenticatedMoviesRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedMovieIdRoute: AuthenticatedMovieIdRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AuthenticatedRoute: AuthenticatedRoute,
-  MoviesRoute: MoviesRoute,
-  MovieIdRoute: MovieIdRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

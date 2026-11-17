@@ -1,36 +1,66 @@
 # Projector
 
-Find something good to watch tonight. A film browser built on [TMDB](https://www.themoviedb.org): this week's top 10, what's popular, in cinemas and coming soon, every film filterable by genre, search, and a list of your own.
+A website for finding films to watch. It shows this week's top 10, popular films, films in cinemas and films coming soon. You can search, filter by genre and save films to your own list.
 
-## Setup
+Film data comes from [TMDB](https://www.themoviedb.org). You need an account to use the site.
 
-```bash
-npm install
-cp .env.example .env   # then fill in both keys
-npm run dev            # http://localhost:3000
-```
+## Run it
 
-| Variable | Where to get it |
+1. Install the packages:
+
+   ```bash
+   npm install
+   ```
+
+2. Make your settings file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Open `.env` and add your two keys:
+
+   | Key | Where to find it |
+   |---|---|
+   | `VITE_CLERK_PUBLISHABLE_KEY` | Clerk dashboard → API keys |
+   | `VITE_TMDB_TOKEN` | TMDB → Settings → API → **API Read Access Token** |
+
+   Never put real keys in `.env.example`. Git saves that file; it ignores `.env`.
+
+4. Start the site:
+
+   ```bash
+   npm run dev
+   ```
+
+   Then open http://localhost:3000.
+
+## Other commands
+
+| Command | What it does |
 |---|---|
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk dashboard → API keys |
-| `VITE_TMDB_TOKEN` | TMDB → Settings → API → **API Read Access Token** |
+| `npm run build` | Builds the site for production |
+| `npm test` | Runs the tests |
 
-`npm run build` builds for production, `npm test` runs the tests.
+## Pages
 
-## How it's built
-
-- **React 19 + Vite**, TypeScript, **TanStack Router** (file routes in `src/routes/`) and **TanStack Query**.
-- **Clerk** for accounts. Every page sits under `src/routes/_authenticated.tsx`, which shows the landing page to signed-out visitors.
-- **Tailwind v4**. The palette, fonts and motion curves live in `src/styles.css` under `@theme`.
-- All TMDB calls go through `src/lib/tmdb.ts`. "My list" is saved in the browser (`src/lib/my-list.ts`).
-
-| Route | Page |
+| Address | What you see |
 |---|---|
-| `/` | Featured films, top 10 and rails |
-| `/movies?genre=&sort=` | Every film, filterable, loads as you scroll |
-| `/movie/:id` | Film page with cast, player and similar films |
-| `/list` | My list |
+| `/` | Home: a featured film and rows of films |
+| `/movies` | All films. Filter by genre, sort, and more load as you scroll |
+| `/movie/:id` | One film: details, cast, player and similar films |
+| `/list` | Films you saved (stored in your browser) |
 
-Search opens with the search button, <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd> or <kbd>/</kbd>.
+Press <kbd>⌘K</kbd>, <kbd>Ctrl K</kbd> or <kbd>/</kbd> to search.
 
-Film data and images: TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
+## Built with
+
+React, Vite, TypeScript, TanStack Router and Query, Tailwind CSS, and Clerk for sign-in.
+
+- Pages are in `src/routes/`.
+- All TMDB requests are in `src/lib/tmdb.ts`.
+- Colours, fonts and animation settings are in `src/styles.css`.
+
+---
+
+This product uses the TMDB API but is not endorsed or certified by TMDB.

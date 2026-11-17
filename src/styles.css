@@ -32,6 +32,7 @@
   --animate-rise: rise 700ms var(--ease-out) both;
   --animate-fade: fade 400ms var(--ease-out) both;
   --animate-progress: progress linear both;
+  --animate-settle: settle linear both;
 
   @keyframes shutter {
     from {
@@ -63,6 +64,14 @@
   @keyframes fade {
     from {
       opacity: 0;
+    }
+  }
+  @keyframes settle {
+    from {
+      transform: scale(1.07);
+    }
+    to {
+      transform: scale(1);
     }
   }
   @keyframes progress {

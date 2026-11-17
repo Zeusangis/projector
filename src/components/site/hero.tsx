@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Check, Info, Play, Plus, Star } from "lucide-react";
 
@@ -35,7 +35,10 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
   );
   const [index, setIndex] = useState(0);
   const [previous, setPrevious] = useState<number | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const paused = hovered || hidden;
+  const swipe = useRef<{ x: number; y: number; t: number } | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const { data: genres } = useGenres();
   const { open } = useMovieDialog();
@@ -46,6 +49,13 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
     setPrevious(index);
     setIndex(next);
   };
+
+  // A film keeps its place while the tab is in the background.
+  useEffect(() => {
+    const onVis = () => setHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
 
   // Warm the cache for the next backdrop so the shutter never opens on nothing.
   useEffect(() => {
@@ -79,11 +89,29 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
       aria-roledescription="carousel"
       aria-label="Featured this week"
       className="relative isolate h-[min(88svh,52rem)] min-h-[34rem] overflow-hidden bg-black"
-      onPointerEnter={() => setPaused(true)}
-      onPointerLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
+      onFocus={() => setHovered(true)}
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) setPaused(false);
+        if (!e.currentTarget.contains(e.relatedTarget)) setHovered(false);
+      }}
+      // Swipe between films on touch. A quick flick counts even if it is short.
+      onTouchStart={(e) => {
+        const t = e.touches[0];
+        swipe.current = { x: t.clientX, y: t.clientY, t: performance.now() };
+      }}
+      onTouchEnd={(e) => {
+        const start = swipe.current;
+        swipe.current = null;
+        if (!start) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - start.x;
+        const dy = t.clientY - start.y;
+        if (Math.abs(dx) < Math.abs(dy) * 1.5) return; // vertical scroll, not a swipe
+        const velocity = Math.abs(dx) / (performance.now() - start.t);
+        if (Math.abs(dx) > 60 || velocity > 0.4) {
+          go((index + (dx < 0 ? 1 : -1) + slides.length) % slides.length);
+        }
       }}
     >
       {/* Previous frame stays underneath while the new one opens over it. */}
@@ -97,15 +125,24 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
           className="absolute inset-0 -z-20 size-full object-cover"
         />
       )}
-      <img
+      {/* The frame settles slowly while the film is on screen, in step with the reel bar. */}
+      <div
         key={movie.id}
-        src={img(movie.backdrop_path, "w1280")}
-        srcSet={backdropSrcSet(movie.backdrop_path)}
-        sizes="100vw"
-        alt=""
-        fetchPriority="high"
-        className="absolute inset-0 -z-10 size-full animate-shutter object-cover"
-      />
+        className={cn("absolute inset-0 -z-10", !reducedMotion && "animate-settle")}
+        style={{
+          animationDuration: `${SLIDE_MS}ms`,
+          animationPlayState: paused ? "paused" : "running",
+        }}
+      >
+        <img
+          src={img(movie.backdrop_path, "w1280")}
+          srcSet={backdropSrcSet(movie.backdrop_path)}
+          sizes="100vw"
+          alt=""
+          fetchPriority="high"
+          className="size-full animate-shutter object-cover"
+        />
+      </div>
 
       {/* Legibility: the room darkens toward the seats and toward the text. */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-velvet via-velvet/40 to-velvet/10" />
@@ -165,6 +202,19 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
       <div
         role="tablist"
         aria-label="Choose a featured film"
+        onKeyDown={(e) => {
+          const keys: Record<string, number> = {
+            ArrowRight: (index + 1) % slides.length,
+            ArrowLeft: (index - 1 + slides.length) % slides.length,
+            Home: 0,
+            End: slides.length - 1,
+          };
+          const next = keys[e.key];
+          if (next === undefined) return;
+          e.preventDefault();
+          go(next);
+          (e.currentTarget.children[next] as HTMLElement | undefined)?.focus();
+        }}
         className="absolute inset-x-0 bottom-0 flex gap-2 px-[var(--gutter)] pb-8 sm:gap-3"
       >
         {slides.map((s, i) => {
@@ -176,6 +226,7 @@ export function Hero({ movies, isLoading }: { movies: Movie[] | undefined; isLoa
               role="tab"
               aria-selected={active}
               aria-label={s.title}
+              tabIndex={active ? 0 : -1}
               onClick={() => go(i)}
               className="group/tab relative flex-1 py-3 text-left sm:max-w-44"
             >
